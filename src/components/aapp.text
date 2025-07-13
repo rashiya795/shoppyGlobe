@@ -1,0 +1,101 @@
+import React, { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import Checkout from './Checkout'
+
+
+export default function Productdetails() {
+  const { id } = useParams()
+  const [product, setProduct] = useState(null)
+
+  useEffect(() => {
+    async function getProductData() {
+      const data = await fetch(`https://dummyjson.com/products/${id}`)
+      const fullData = await data.json()
+      setProduct(fullData)
+    }
+    getProductData()
+  }, [id])
+
+  if (!product) {
+    return <p className="text-center mt-10 text-lg font-semibold">Loading product details...</p>
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 px-6 py-10">
+      {/* Product Card */}
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden flex flex-col lg:flex-row">
+        
+        {/* Product Image */}
+        <div className="lg:w-1/2 bg-gray-50 flex justify-center items-center p-6">
+          <img
+            src={product.thumbnail}
+            alt={product.title}
+            className="w-full h-96 object-contain rounded-lg"
+          />
+        </div>
+
+        {/* Product Details */}
+        <div className="lg:w-1/2 p-8 space-y-6">
+          <h1 className="text-3xl font-bold text-rose-800">{product.title}</h1>
+          <p className="text-gray-700 text-sm leading-relaxed">{product.description}</p>
+
+          <div className="space-y-1 text-sm text-gray-600">
+            <p><span className="font-semibold text-gray-800">Warranty:</span> {product.warrantyInformation}</p>
+            <p><span className="font-semibold text-gray-800">Shipping:</span> {product.shippingInformation}</p>
+            <p>
+              <span className="font-semibold text-gray-800">Availability:</span>
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                {product.availabilityStatus}
+              </span>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 mt-2">
+            <span className="text-2xl font-bold text-gray-800">₹{Math.floor(product.price * 80)}</span>
+            <span className="text-sm text-red-500 font-semibold bg-red-100 px-2 py-0.5 rounded">
+              {Math.floor(product.discountPercentage)}% OFF
+            </span>
+          </div>
+
+<p className="text-yellow-500 font-bold text-sm bg-green-600 w-fit p-2 rounded-lg" >
+  ⭐ {Math.floor(product.rating)}
+</p>
+
+          <div className="flex gap-4 mt-4">
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">
+              Add to Cart
+            </button>
+            <Link to={`/checkout/${product.id}`}>
+            <button className="border border-orange-500 text-orange-600 px-6 py-2 rounded-lg hover:bg-orange-100 transition">
+              Buy Now
+            </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Review Section */}
+      <div className="max-w-6xl mx-auto mt-10 bg-white rounded-xl shadow-md p-6">
+        <h2 className="text-2xl font-bold mb-4 text-rose-700">Customer Reviews</h2>
+        {product.reviews?.length > 0 ? (
+          <div className="space-y-4">
+            {product.reviews.map((review, index) => (
+              <div key={index} className="border-b pb-4">
+<p className="text-yellow-500 font-bold text-sm bg-green-600 w-fit p-2 rounded-lg" >
+  ⭐ {Math.floor(review.rating)}
+</p>
+                <p className="italic text-gray-700 mb-1">"{review.comment}"</p>
+                <p className="text-sm text-gray-500">
+                  - {review.reviewerName} ({review.reviewerEmail}) |{" "}
+                  {new Date(review.date).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No reviews available for this product.</p>
+        )}
+      </div>
+    </div>
+  )
+}
