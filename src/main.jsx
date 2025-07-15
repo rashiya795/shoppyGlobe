@@ -5,7 +5,7 @@ import './index.css'
 import App from './App.jsx'
 // import ProductList from './components/ProductList.jsx'
 // import Productdetails from './components/Productdetails.jsx'
-import Error from './components/NonFound.jsx'
+import Error from './components/Error.jsx'
 import React,{lazy,Suspense} from 'react'
 
 const ProductList = lazy(()=>import('./components/ProductList.jsx'))
